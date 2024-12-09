@@ -96,6 +96,10 @@ export class CleanupComponent {
         reason: ''
       }
     }).filter(f => {
+      if (f.rich.feed.feed?.length === 0) {
+        f.reason += `No posts at all.`;
+        return true;
+      }
       const orderedFeed = f.rich.feed.feed.sort((a, b) => new Date(b.post.indexedAt).getTime() - new Date(a.post.indexedAt).getTime());
       const daysSinceLastPost = (this.gatherDate!.getTime() - new Date(orderedFeed[0].post.indexedAt).getTime()) / (1000 * 60 * 60 * 24);
       const reposts = f.rich.feed.feed.filter(p => p.post.author.handle !== f.rich.follow.handle).length;
