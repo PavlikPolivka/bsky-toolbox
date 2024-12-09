@@ -53,39 +53,12 @@ export class CleanupComponent {
           return this.bskyService.getRichFollow(follows);
         })
       ).subscribe(follows => {
-        // follows = follows.map(f => this.filterByTypeRecursive(f));
         this.logger.log(`Got ${follows.length} users feeds.`);
         this.gatherDate = new Date();
         this.storageService.setFollows(follows);
         this.storageService.setGatherDate(new Date());
         this.follows = follows;
     });
-  }
-
-  private filterByTypeRecursive<T extends object>(data: any): T {
-    if (Array.isArray(data)) {
-      // If the data is an array, recursively filter each item
-      return data.map(item => this.filterByTypeRecursive(item)) as unknown as T;
-    }
-
-    if (typeof data === 'object' && data !== null) {
-      const filtered = {} as T;
-
-      for (const key in filtered) {
-        if (data.hasOwnProperty(key)) {
-          // Recursively filter nested objects or assign primitive values
-          if (typeof data[key] === 'object' && data[key] !== null) {
-            // @ts-ignore
-            filtered[key] = this.filterByTypeRecursive(data[key]);
-          } else {
-            filtered[key] = data[key];
-          }
-        }
-      }
-
-      return filtered;
-    }
-    return data as T;
   }
 
   filter() {
