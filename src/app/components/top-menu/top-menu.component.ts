@@ -1,25 +1,22 @@
-// @ts-ignore
-import { Component } from '@angular/core';
-// @ts-ignore
+import {Component, EventEmitter, Output} from '@angular/core';
 import {MatMenuModule} from '@angular/material/menu';
-// @ts-ignore
 import {MatButtonModule} from '@angular/material/button';
-// @ts-ignore
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {AccountService} from '../../services/account.service';
-// @ts-ignore
 import {CommonModule} from '@angular/common';
 import {Account} from '../../dto/account';
-// @ts-ignore
 import {RouterLink} from '@angular/router';
+import {BurgerMenuComponent} from '../burger-menu/burger-menu.component';
 
 @Component({
   selector: 'app-top-menu',
-  imports: [MatToolbarModule, MatButtonModule, MatMenuModule, CommonModule, RouterLink],
+  imports: [MatToolbarModule, MatButtonModule, MatMenuModule, CommonModule, RouterLink, BurgerMenuComponent],
   templateUrl: './top-menu.component.html',
   styleUrl: './top-menu.component.css'
 })
 export class TopMenuComponent {
+
+  @Output() sideMenuOpened: EventEmitter<boolean> = new EventEmitter();
 
   currentAccount: Account | null = null;
   accounts: Account[] = [];
@@ -39,5 +36,9 @@ export class TopMenuComponent {
 
   isCurrent(account: Account) {
     return this.currentAccount?.name === account.name;
+  }
+
+  menuOpenedAction(opened: boolean) {
+    this.sideMenuOpened.next(opened);
   }
 }

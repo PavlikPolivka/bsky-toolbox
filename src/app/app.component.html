@@ -1,20 +1,15 @@
-<mat-sidenav-container class="app-container">
-  <!-- Side Navigation -->
-  <mat-sidenav mode="side" opened>
+<mat-drawer-container class="app-container" autosize>
+
+  <mat-drawer #drawer mode="side">
     <app-side-menu></app-side-menu>
-  </mat-sidenav>
+  </mat-drawer>
 
-  <!-- Main Content -->
-  <mat-sidenav-content>
-    <!-- Top Menu -->
-    <app-top-menu></app-top-menu>
-
-    <!-- Router Outlet for Page Content -->
+  <div>
+    <app-top-menu (sideMenuOpened)="drawer.toggle($event)"></app-top-menu>
     <div class="content">
       <router-outlet></router-outlet>
     </div>
-
-    <!-- Footer -->
     <app-footer></app-footer>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+  </div>
+
+</mat-drawer-container>

@@ -8,8 +8,6 @@ import {
   EMPTY,
   Observable,
   tap,
-  filter,
-  repeat,
   map,
   ReplaySubject,
   Subject,
@@ -64,12 +62,26 @@ export class BskyService {
   }
 
   private login(name: string, password: string): Observable<BSkyLogin> {
+    const storedLogin = localStorage.getItem('login');
+    if (storedLogin) {
+      const loginData: LoginData = JSON.parse(storedLogin);
+      if (loginData.login.handle === this._account?.name && new Date().getTime() - new Date(loginData.loginDate).getTime() < 1000 * 60 * 60 * 6) {
+        return of(loginData.login);
+      }
+    }
     return this.http.post<BSkyLogin>(
       "https://bsky.social/xrpc/com.atproto.server.createSession",
       {
         identifier: name,
         password: password
       }
+    ).pipe(
+      tap(login => {
+        localStorage.setItem('login', JSON.stringify({
+          loginDate: new Date(),
+          login: login
+        }));
+      })
     )
   }
 
@@ -78,32 +90,23 @@ export class BskyService {
       return EMPTY;
     }
 
-    const profiles: BSkyFollow[] = []; // Aggregates all follows
+    const profiles: BSkyFollow[] = [];
+
     return of(null).pipe(
-      switchMap(() => {
-        return this.getFollowsInternal(undefined).pipe(
-          tap(response => {
-            profiles.push(...response.follows);
-          }),
-          expand(response => {
-            if (response.cursor) {
-              return this.getFollowsInternal(response.cursor).pipe(
-                tap(response => {
-                  profiles.push(...response.follows);
-                })
-              )
-            }
-            return EMPTY;
-          })
-        )
+      switchMap(() => this.getFollowsInternal(undefined)),
+      expand((response) => {
+        if (response.cursor) {
+          return this.getFollowsInternal(response.cursor);
+        }
+        return EMPTY;
       }),
-      takeWhile(response => {
-        return !!response.cursor;
+      tap((response) => {
+        profiles.push(...response.follows);
       }),
+      takeWhile((response) => !!response.cursor, true),
       last(),
       map(() => profiles)
-    )
-
+    );
   }
 
   getFollowsInternal(cursor?: string) {
@@ -180,7 +183,7 @@ export class BskyService {
   }
 
   deleteRecord(atUri: AtUri) {
-    return this.http.post<BSkyLogin>(
+    return this.http.post(
       "https://bsky.social/xrpc/com.atproto.repo.deleteRecord",
       atUri,
       {
@@ -190,6 +193,11 @@ export class BskyService {
       }
     )
   }
+}
+
+interface LoginData {
+  loginDate: Date,
+  login: BSkyLogin
 }
 
 

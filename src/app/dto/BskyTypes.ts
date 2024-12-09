@@ -1,11 +1,12 @@
 
 export interface BSkyLogin {
+  handle: string;
   accessJwt: string;
   refreshJwt: string;
 }
 
 export interface BSkyFollows {
-  cursor: string;
+  cursor?: string;
   follows: BSkyFollow[];
 }
 

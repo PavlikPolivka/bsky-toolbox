@@ -1,5 +1,6 @@
 <mat-toolbar color="primary">
-  <span>Blue Sky Toolbox</span>
+  <app-burger-menu (opened)="menuOpenedAction($event)"/>
+  <span>🦋 Blue Sky Toolbox 🧰</span>
   <span class="spacer"></span>
   <ng-container *ngIf="currentAccount">
     <button mat-button [matMenuTriggerFor]="accountMenu" color="accent">{{ currentAccount.name }}</button>
