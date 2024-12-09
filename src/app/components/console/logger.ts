@@ -10,4 +10,8 @@ export class Logger {
     this.logSubject.next([...currentLogs, message]);
   }
 
+  clr(): void {
+    this.logSubject.next([]);
+  }
+
 }

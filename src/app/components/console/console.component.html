@@ -1,5 +1,8 @@
-<div class="console">
+<h2>Log:</h2>
+<div #scrollContainer class="console">
   <div *ngFor="let log of logger.logs$ | async">
     {{ log }}
   </div>
 </div>
+<button mat-raised-button (click)="clean()" class="clean">Clean</button>
+

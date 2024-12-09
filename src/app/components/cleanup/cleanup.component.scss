@@ -6,3 +6,17 @@
   display: flex;
   gap: 15px;
 }
+
+.layout {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.left {
+  min-width: 300px;
+}
+
+.right {
+  width: 75%;
+}
