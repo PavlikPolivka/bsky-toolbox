@@ -1,0 +1,27 @@
+<h1>BlueSky Toolbox</h1>
+
+<ng-container *ngIf="!currentAccount">
+  <h2>No accounts currently added.</h2>
+</ng-container>
+
+<ng-container *ngIf="accounts.length > 0">
+  <h2>Supported Accounts:</h2>
+  <mat-list role="list">
+    <mat-list-item role="listitem" *ngFor="let account of accounts">
+      <div class="list-item">
+        {{ account.name }}
+        <button mat-icon-button *ngIf="!isCurrent(account)" (click)="removeAccount(account)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </mat-list-item>
+  </mat-list>
+</ng-container>
+
+<p>We are storing the data provided to local storage. Nothing gets saved to our servers.</p>
+<h2>You can add new account below:</h2>
+<app-add-account/>
+
+
+
+

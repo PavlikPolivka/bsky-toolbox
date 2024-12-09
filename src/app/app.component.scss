@@ -1,0 +1,7 @@
+.app-container {
+  height: 100vh;
+}
+.content {
+  padding: 16px;
+  min-height: calc(100vh - 128px); /* Adjust for toolbar and footer height */
+}

@@ -1,0 +1,32 @@
+@use '@angular/material' as mat;
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+body {
+  margin: 0;
+  font-family: Roboto, sans-serif;
+}
+
+mat-sidenav-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+mat-sidenav {
+  width: 200px;
+}
+
+mat-sidenav-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.content {
+  flex: 1;
+  padding: 16px;
+}
+
+.footer {
+  text-align: center;
+}

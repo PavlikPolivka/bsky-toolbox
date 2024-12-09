@@ -1,0 +1,5 @@
+<div class="console">
+  <div *ngFor="let log of logger.logs$ | async">
+    {{ log }}
+  </div>
+</div>

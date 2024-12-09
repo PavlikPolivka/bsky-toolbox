@@ -1,0 +1,15 @@
+<mat-toolbar color="primary">
+  <span>Blue Sky Toolbox</span>
+  <span class="spacer"></span>
+  <ng-container *ngIf="currentAccount">
+    <button mat-button [matMenuTriggerFor]="accountMenu" color="accent">{{ currentAccount.name }}</button>
+    <mat-menu #accountMenu="matMenu">
+      <ng-container *ngFor="let account of accounts">
+        <button mat-menu-item (click)="switch(account)" [disabled]="isCurrent(account)">{{ account.name }}</button>
+      </ng-container>
+    </mat-menu>
+  </ng-container>
+  <ng-container *ngIf="!currentAccount">
+    <a mat-button routerLink="/settings">Add Account</a>
+  </ng-container>
+</mat-toolbar>

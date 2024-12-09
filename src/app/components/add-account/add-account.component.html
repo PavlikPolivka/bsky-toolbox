@@ -1,0 +1,16 @@
+<p>
+  <mat-form-field appearance="fill">
+    <mat-label>Account name/handle</mat-label>
+    <input matInput [(ngModel)]="name" placeholder="something.bsky.com">
+  </mat-form-field>
+</p>
+<p>
+  <mat-form-field appearance="fill">
+    <mat-label>App password</mat-label>
+    <input matInput [(ngModel)]="password" type="password">
+  </mat-form-field>
+</p>
+<p>
+  <button mat-raised-button (click)="addAccount()">Add</button>
+</p>
+

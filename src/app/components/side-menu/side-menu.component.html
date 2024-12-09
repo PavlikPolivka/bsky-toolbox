@@ -1,0 +1,18 @@
+<mat-toolbar color="primary"></mat-toolbar>
+<mat-nav-list>
+  <a mat-list-item routerLink="/home">
+    <div class="menu-item">
+      <mat-icon>home</mat-icon> Home
+    </div>
+  </a>
+  <a mat-list-item routerLink="/settings">
+    <div class="menu-item">
+      <mat-icon>settings</mat-icon> Settings
+    </div>
+  </a>
+  <ng-container *ngIf="account">
+    <mat-divider></mat-divider>
+    <a mat-list-item routerLink="/cleanup">Following Cleanup</a>
+  </ng-container>
+
+</mat-nav-list>

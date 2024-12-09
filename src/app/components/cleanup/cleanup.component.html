@@ -1,0 +1,35 @@
+<div class="section">
+  <p *ngIf="gatherDate">Last gather date: {{gatherDate | date: "MM-dd-yyyy HH:mm:ss"}}</p>
+  <p *ngIf="!gatherDate">Last gather date: never</p>
+  <p>Gathered follows: {{follows.length}}</p>
+  <button mat-raised-button (click)="startGathering()">Gather Follower Data</button>
+</div>
+<mat-divider/>
+<div class="section">
+  <p>Filtered follows: {{filteredFollows.length}}</p>
+  <div>
+    <mat-form-field appearance="fill">
+      <mat-label>Days of inactivity</mat-label>
+      <input matInput [(ngModel)]="daysOfInactivity">
+    </mat-form-field>
+  </div>
+  <div>
+    <mat-form-field appearance="fill">
+      <mat-label>Ratio of reposts</mat-label>
+      <input matInput [(ngModel)]="repostRatio">
+    </mat-form-field>
+  </div>
+  <div class="menu">
+    <button mat-raised-button (click)="filter()">Filter follows</button>
+    <button mat-raised-button (click)="showFiltered()">Show filtered</button>
+  </div>
+
+</div>
+<mat-divider/>
+<div class="section">
+  <button mat-raised-button (click)="unfollow()">Unfollow</button>
+</div>
+<mat-divider/>
+
+<h3>Log:</h3>
+<app-console [logger]="logger"/>
