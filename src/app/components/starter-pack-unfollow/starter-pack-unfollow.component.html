@@ -1,0 +1,32 @@
+<div class="layout">
+  <div class="left">
+    <div class="section">
+      <div>
+        <mat-form-field appearance="fill" class="wide">
+          <mat-label>Starter Pack URL (from share button)</mat-label>
+          <input matInput [(ngModel)]="starterPackUrl">
+        </mat-form-field>
+      </div>
+
+      <button mat-raised-button (click)="startLookup()">Lookup starter pack</button>
+    </div>
+    <mat-divider/>
+    <div class="section">
+      <p *ngIf="starterPackName">{{ starterPackName }}</p>
+      <p *ngIf="starterPackName">Accounts: {{ subjects?.length }}</p>
+      <p *ngIf="starterPackName">Following: {{ getFollowingCount() }}</p>
+      <div class="action">
+        <button mat-raised-button (click)="unloadData()">Unload data</button>
+      </div>
+      <div class="action">
+        <button mat-raised-button (click)="listAccounts()">List Accounts</button>
+      </div>
+      <div class="action">
+        <button mat-raised-button (click)="unfollowAll()">Unfollow All</button>
+      </div>
+    </div>
+  </div>
+  <div class="right">
+    <app-console [logger]="logger"/>
+  </div>
+</div>

@@ -24,6 +24,41 @@ export interface BSkyFeed {
   cursor?: string;
 }
 
+export interface BSkyStarterPackResponse {
+  starterPack: BSkyStarterPack;
+}
+
+export interface BSkyStarterPack {
+  record: BSkyRecord;
+  list: BSkyList;
+}
+
+export interface BSkyRecord {
+  name: string;
+  description: string;
+}
+
+export interface BSkyList {
+  uri: string;
+}
+
+export interface BSkyListResponse {
+  list: BSkyList;
+  items: BSkyItem[];
+  cursor?: string;
+}
+
+export interface BSkyItem {
+  uri: string;
+  subject: BSkySubject;
+}
+
+export interface BSkySubject {
+  did: string;
+  handle: string;
+  viewer: BSkyViewer;
+}
+
 export interface BSkyFeedItem {
   post: BSkyPost;
 }

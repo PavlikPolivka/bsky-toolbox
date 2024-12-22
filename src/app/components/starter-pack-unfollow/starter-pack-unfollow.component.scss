@@ -1,0 +1,32 @@
+.section {
+  padding-top: 25px;
+  padding-bottom: 25px;
+}
+.menu {
+  display: flex;
+  gap: 15px;
+}
+
+.layout {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.left {
+  min-width: 300px;
+}
+
+.right {
+  flex: 1;
+  min-width: 400px;
+}
+
+.wide {
+  width: 98%;
+}
+
+.action {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}

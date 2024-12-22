@@ -1,5 +1,5 @@
 // @ts-ignore
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AccountService} from './account.service';
 import {
   of,
@@ -12,10 +12,18 @@ import {
   ReplaySubject,
   Subject,
   expand,
-  takeWhile, last, mergeMap, toArray, catchError, config
+  takeWhile, last, mergeMap, toArray, catchError, config, subscribeOn, first
 } from 'rxjs';
 import {Account} from '../dto/account';
-import {BSkyFeed, BSkyFeedItem, BSkyFollow, BSkyFollows, BSkyLogin, RichFollow} from '../dto/BskyTypes';
+import {
+  BSkyFeed,
+  BSkyFeedItem,
+  BSkyFollow,
+  BSkyFollows, BSkyListResponse,
+  BSkyLogin,
+  BSkyStarterPack, BSkyStarterPackResponse, BSkySubject,
+  RichFollow
+} from '../dto/BskyTypes';
 import {HttpClient} from '@angular/common/http';
 import {AtUri} from '../dto/AtUri';
 
@@ -57,7 +65,7 @@ export class BskyService {
     return this._ok;
   }
 
-  canRun(): boolean  {
+  canRun(): boolean {
     return !!this._login && !!this._account;
   }
 
@@ -113,12 +121,12 @@ export class BskyService {
     if (!this.canRun()) {
       return EMPTY;
     }
-    const cursorParam = cursor ? `&cursor=${ cursor }` : '';
+    const cursorParam = cursor ? `&cursor=${cursor}` : '';
     return this.http.get<BSkyFollows>(
-      `https://bsky.social/xrpc/app.bsky.graph.getFollows?limit=100&actor=${ this._account!.name }${ cursorParam }`,
+      `https://bsky.social/xrpc/app.bsky.graph.getFollows?limit=100&actor=${this._account!.name}${cursorParam}`,
       {
         headers: {
-          "Authorization": `Bearer ${ this._login!.accessJwt }`
+          "Authorization": `Bearer ${this._login!.accessJwt}`
         }
       }
     )
@@ -138,7 +146,7 @@ export class BskyService {
               }
             })
           )
-      }
+        }
       ),
       tap(() => index++),
       takeWhile(() => index < totalFollows, true),
@@ -148,10 +156,10 @@ export class BskyService {
 
   getFeedData(handle: string): Observable<BSkyFeed> {
     return this.http.get<BSkyFeed>(
-      `https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?actor=${ handle }&limit=30`,
+      `https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?actor=${handle}&limit=30`,
       {
         headers: {
-          "Authorization": `Bearer ${ this._login!.accessJwt }`
+          "Authorization": `Bearer ${this._login!.accessJwt}`
         }
       }
     ).pipe(
@@ -161,7 +169,7 @@ export class BskyService {
           return {
             post: {
               indexedAt: new Date(item.post.indexedAt),
-              author: { handle: item.post.author.handle }
+              author: {handle: item.post.author.handle}
             }
           }
         }
@@ -188,16 +196,109 @@ export class BskyService {
       atUri,
       {
         headers: {
-          "Authorization": `Bearer ${ this._login!.accessJwt }`
+          "Authorization": `Bearer ${this._login!.accessJwt}`
         }
       }
     )
   }
+
+  getStarterPackAtFromTheShareUrl(shareUrl: string): Observable<string> {
+    return this.http.get<Location>(
+      `https://location-header.ppolivka.com/api/proxy?url=${encodeURIComponent(shareUrl)}`
+    ).pipe(
+      first(),
+      map(response => {
+        return response.location;
+      }),
+      catchError(error => {
+        return EMPTY;
+      })
+    )
+  }
+
+  getStarterPackAt(location: string): string | null {
+    // https://bsky.app/start/did:plc:mozqqiaodbvfpbghqk5pjw2y/3lcggg3lfkt2z
+    // at://did:plc:mozqqiaodbvfpbghqk5pjw2y/app.bsky.graph.starterpack/3lcggg3lfkt2z
+    try {
+      const at = location.split('did')[1].split('/');
+      return `at://did${at[0]}/app.bsky.graph.starterpack/${at[1]}`;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  getStarterPack(at: string): Observable<BSkyStarterPack> {
+    return this.http.get<BSkyStarterPackResponse>(
+      `https://bsky.social/xrpc/app.bsky.graph.getStarterPack?starterPack=${encodeURIComponent(at)}`,
+      {
+        headers: {
+          "Authorization": `Bearer ${this._login!.accessJwt}`
+        }
+      }
+    ).pipe(
+      map(response => {
+        return response.starterPack;
+      })
+    )
+  }
+
+  getListSubjects(listUri: string): Observable<BSkySubject[]> {
+    if (!this.canRun()) {
+      return EMPTY;
+    }
+
+    const subjects: BSkySubject[] = [];
+
+    return of(null).pipe(
+      switchMap(() => this.getListSubjectsInternal(listUri, undefined)),
+      expand((response) => {
+        if (response.cursor) {
+          return this.getListSubjectsInternal(listUri, response.cursor);
+        }
+        return EMPTY;
+      }),
+      tap((response) => {
+        subjects.push(...response.items.map(item => item.subject));
+      }),
+      takeWhile((response) => !!response.cursor, true),
+      last(),
+      map(() => subjects),
+      map(subjects => subjects.map(subject => {
+        return {
+          did: subject.did,
+          handle: subject.handle,
+          viewer: {
+            following: subject.viewer.following
+          }
+        };
+      }))
+    );
+  }
+
+  getListSubjectsInternal(listUri: string, cursor?: string) {
+    if (!this.canRun()) {
+      return EMPTY;
+    }
+    const cursorParam = cursor ? `&cursor=${cursor}` : '';
+    return this.http.get<BSkyListResponse>(
+      `https://bsky.social/xrpc/app.bsky.graph.getList?limit=100&list=${encodeURIComponent(listUri)}${cursorParam}`,
+      {
+        headers: {
+          "Authorization": `Bearer ${this._login!.accessJwt}`
+        }
+      }
+    )
+  }
+
 }
 
 interface LoginData {
   loginDate: Date,
   login: BSkyLogin
+}
+
+interface Location {
+  location: string
 }
 
 
