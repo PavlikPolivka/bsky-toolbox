@@ -5,6 +5,7 @@ A toolset for managing your BSky account, designed to provide features like fetc
 ## Features
 
 - **Follow cleanup:** Automatically unfollow inactive people. 
+- **Starter Pack Unfollow:** Unfollow the whole starter pack. 
 
 ---
 

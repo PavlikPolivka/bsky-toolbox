@@ -13,7 +13,7 @@
     <mat-divider/>
     <div class="section">
       <p *ngIf="starterPackName">{{ starterPackName }}</p>
-      <p *ngIf="starterPackName">Accounts: {{ subjects?.length }}</p>
+      <p *ngIf="starterPackName">Accounts: {{ subjects?.length ?? 0 }}</p>
       <p *ngIf="starterPackName">Following: {{ getFollowingCount() }}</p>
       <div class="action">
         <button mat-raised-button (click)="unloadData()">Unload data</button>
